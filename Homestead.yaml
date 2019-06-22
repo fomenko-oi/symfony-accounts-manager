@@ -1,0 +1,28 @@
+ip: 192.168.10.10
+memory: 2048
+cpus: 2
+provider: virtualbox
+authorize: ~/.ssh/id_rsa.pub
+keys:
+    - ~/.ssh/id_rsa
+folders:
+    -
+        map: C:\projects\symfony-accounts
+        to: /home/vagrant/code
+sites:
+    -
+        map: homestead.test
+        to: /home/vagrant/code/public
+        type: symfony4
+databases:
+    - homestead
+name: symfony-accounts
+hostname: symfony-accounts
+elasticsearch: 7
+
+# новые параметры прокидывания порта
+ports:
+    - send: 9200
+      to: 9200
+    - send: 80
+      to: 80
