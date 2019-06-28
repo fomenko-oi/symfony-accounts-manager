@@ -9,8 +9,8 @@
     <h1>Category #{{ category.id }}</h1>
 
     {% if category.parent %}
-        <div>
-            Parent: #{{ category.parent.id }} <b class="badge badge-secondary">{{ category.parent.name }}</b>
+        <div class="alert alert-secondary">
+            Parent category: #{{ category.parent.id }} <a href="{{ path('category.show', {id: category.parent.id}) }}">{{ category.parent.name }}</a>
         </div>
     {% endif %}
 
@@ -49,24 +49,69 @@
 
         <div class="col-md-6">
             <div class="alert alert-secondary">
-                <h4>Account fields</h4>
+                <h5>Account fields</h5>
 
                 <div>
-                    {% if category.parentFields|length > 0 %}
-                        <h5>Parent fields</h5>
-                        <ul>
-                            {% for field in category.parentFields %}
-                                <li>#{{ field.id }} {{ field.name }}:{{ field.type }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Variables</th>
+                            <th class="text-center">Required</th>
+                        </tr>
+                        </thead>
 
-                    <h5>Own fields</h5>
-                    <ul>
-                        {% for field in category.ownFields %}
-                            <li>#{{ field.id }} {{ field.name }}:{{ field.type }}</li>
-                        {% endfor %}
-                    </ul>
+                        <tbody>
+                        {% if category.parentFields|length > 0 %}
+                            <tr class="text-center bg-primary" style="color: white; opacity: .7"><td colspan="6">Parent attributes</td></tr>
+
+                            {% for field in category.parentFields %}
+                                <tr>
+                                    <td>{{ field.id }}</td>
+                                    <td>{{ field.name }}</td>
+                                    <td>{{ field.type }}</td>
+                                    <td>{{ field.variables|join("<br>")|raw }}</td>
+                                    <td class="text-center">
+                                        {% if field.required %}
+                                            <span class="badge badge-success">Yes</span>
+                                        {% else %}
+                                            <span class="badge badge-secondary">No</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="btn btn-success">asd</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+
+
+                        {% if category.ownFields|length > 0 %}
+                            <tr class="text-center bg-primary" style="color: white; opacity: .7"><td colspan="6">Own attributes</td></tr>
+
+                            {% for field in category.ownFields %}
+                                <tr>
+                                    <td>{{ field.id }}</td>
+                                    <td>{{ field.name }}</td>
+                                    <td>{{ field.type }}</td>
+                                    <td>{{ field.variables|join("<br>")|raw }}</td>
+                                    <td class="text-center">
+                                        {% if field.required %}
+                                            <span class="badge badge-success">Yes</span>
+                                        {% else %}
+                                            <span class="badge badge-secondary">No</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="btn btn-success">asd</span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
