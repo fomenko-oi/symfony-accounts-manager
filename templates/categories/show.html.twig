@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CategoriesController!{% endblock %}
+
+{% block body %}
+
+<div class="example-wrapper">
+    <h1>Category #{{ category.id }}</h1>
+
+    {% if category.parent %}
+        <div>
+            Parent: #{{ category.parent.id }} <b class="badge badge-secondary">{{ category.parent.name }}</b>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="alert alert-warning">
+                {{ form(account_form) }}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="alert alert-primary">
+                {% if category.accounts.count > 0 %}
+                    <ul style="margin-bottom: 0;" class="list-group">
+                        {% for account in category.accounts %}
+                            <li class="list-group-item">
+                                {{ account.login }}:{{ account.password }}
+                                <a href="{{ path('accounts.show', {id: account.id}) }}" class="btn-primary btn-sm float-right">show</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="alert alert-danger" style="margin-top: 15px;">0 accounts created.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="alert alert-primary">
+                <h5>Create new</h5>
+                {{ form(fields_form) }}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="alert alert-secondary">
+                <h4>Account fields</h4>
+
+                <div>
+                    {% if category.parentFields|length > 0 %}
+                        <h5>Parent fields</h5>
+                        <ul>
+                            {% for field in category.parentFields %}
+                                <li>#{{ field.id }} {{ field.name }}:{{ field.type }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                    <h5>Own fields</h5>
+                    <ul>
+                        {% for field in category.ownFields %}
+                            <li>#{{ field.id }} {{ field.name }}:{{ field.type }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a class="btn btn-primary" href="{{ path('categories') }}">Categories List</a>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        var $field_type_input = $('#field_type')
+        var $field_variables = $('#field_variables_raw')
+
+        $field_variables.parent('.form-group').hide()
+
+        $field_type_input.change(function() {
+            if($field_type_input.val() === 'select') {
+                $field_variables.parent('.form-group').show()
+            } else {
+                $field_variables.parent('.form-group').hide()
+            }
+        })
+    </script>
+{% endblock %}

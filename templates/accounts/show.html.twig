@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Account list{% endblock %}
+
+{% block body %}
+<div class="example-wrapper">
+    <h1>Account #{{ account.id }}</h1>
+
+    <div>
+        Category: <span class="badge badge-secondary">#{{ account.category.id }}: {{ account.category.name }}</span> / ...
+    </div>
+
+    <div class="">
+        <table class="table table-bordered table-striped">
+            <tbody>
+            <tr>
+                <th>ID</th><td>{{ account.id }}</td>
+            </tr>
+            <tr>
+                <th>Login</th><td>{{ account.login }}</td>
+            </tr>
+            <tr>
+                <th>Password</th><td>{{ account.password }}</td>
+            </tr>
+            {% for field in account.fieldsValues %}
+                <tr>
+                    <th>{{ field.field.name }}</th><td>{{ field.value }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a class="btn btn-primary" href="{{ path('category.show', {id: account.category.id}) }}">Go to category</a>
+</div>
+{% endblock %}
