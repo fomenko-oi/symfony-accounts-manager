@@ -3,10 +3,11 @@
 {% block title %}Hello CategoriesController!{% endblock %}
 
 {% block body %}
+    {{ knp_menu_render('create_category') }}
 
-<div class="example-wrapper">
-    <h1>Category create</h1>
+    <div class="example-wrapper">
+        <h1>Category create</h1>
 
-    {{ form(form) }}
-</div>
+        {{ form(form) }}
+    </div>
 {% endblock %}

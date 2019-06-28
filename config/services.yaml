@@ -30,6 +30,9 @@ services:
     App\Menu\Category\MainMenu:
         tags: [{ name: knp_menu.menu_builder, method: build, alias: categories }]
 
+    App\Menu\Category\CreateCategory:
+        tags: [{ name: knp_menu.menu_builder, method: build, alias: create_category }]
+
     App\Menu\Category\ShowCategory:
         tags: [{ name: knp_menu.menu_builder, method: build, alias: show_category }]
 
