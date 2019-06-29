@@ -10,6 +10,7 @@ use App\Form\AccountType;
 use App\Form\Category\CategoryType;
 use App\Form\Category\FieldType;
 use App\Model\Category\Account\AccountFetcher;
+use App\Model\Category\CategoryFetcher;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -22,6 +23,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CategoriesController extends AbstractController
 {
     const ACCOUNTS_PER_PAGE = 10;
+    const CATEGORIES_PER_PAGE = 10;
 
     /**
      * @var EntityManagerInterface
@@ -36,12 +38,15 @@ class CategoriesController extends AbstractController
     /**
      * @Route("/categories", name="categories")
      */
-    public function index()
+    public function index(CategoryFetcher $fetcher, Request $request)
     {
-        $categories = $this->getDoctrine()->getRepository(Category::class);
+        $categories = $fetcher->all(
+            (int)$request->get('page', 1),
+            self::CATEGORIES_PER_PAGE
+        );
 
         return $this->render('categories/index.html.twig', [
-            'categories' => $categories->findAll(),
+            'categories' => $categories,
         ]);
     }
 

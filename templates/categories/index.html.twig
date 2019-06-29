@@ -6,14 +6,27 @@
     {{ knp_menu_render('categories') }}
 
     <div class="example-wrapper">
+        <p class="float-right">
+            <a class="btn btn-success" href="{{ path('category.create') }}">Create new</a>
+        </p>
+
         <h1>Categories</h1>
+        <div class="clearfix"></div>
+
 
         {% for category in categories %}
             <div class="alert alert-primary">
                 <a href="{{ path('category.show', {id: category.id}) }}">{{ category.name }}</a>
+                <span title="Total accounts" class="badge badge-{{ category.accounts_count > 0 ? 'success' : 'secondary' }} float-right">{{ category.accounts_count }}</span>
             </div>
         {% endfor %}
 
-        <a class="btn btn-success" href="{{ path('category.create') }}">Create new</a>
+        <div class="row text-center" style="margin-top: 20px;">
+            <div class="col-md-12 text-center">
+                <ul class="pagination text-center">
+                    {{ knp_pagination_render(categories) }}
+                </ul>
+            </div>
+        </div>
     </div>
 {% endblock %}

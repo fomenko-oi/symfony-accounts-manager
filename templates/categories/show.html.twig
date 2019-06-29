@@ -112,5 +112,13 @@
                 $field_variables.parent('.form-group').hide()
             }
         })
+
+        $('.delete-entity').click(function (e) {
+            $el = $(this);
+
+            e.preventDefault();
+
+            console.log($el.data('url'))
+        })
     </script>
 {% endblock %}
