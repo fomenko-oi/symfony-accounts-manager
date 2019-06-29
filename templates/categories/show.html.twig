@@ -4,7 +4,6 @@
 
 {% block body %}
 {{ knp_menu_render('show_category') }}
-
 <div class="example-wrapper">
     <h1>Category #{{ category.id }}
         <a target="_blank" class="btn btn-primary float-right" href="{{ path('category.accounts.export', {
@@ -24,23 +23,39 @@
     {% endif %}
 
     <div class="row">
-        <div class="col-md-6">
-            <div class="alert alert-warning">
-                {{ form(account_form) }}
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="alert alert-primary">
+        <div class="col-md-8">
+            <div class="">
                 {% if accounts.count > 0 %}
-                    <ul style="margin-bottom: 0;" class="list-group">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Login</th>
+                            <th>Password</th>
+                            {% for field in category.allFields %}
+                                <th style="width: 5%">{{ field.name }}</th>
+                            {% endfor %}
+                            <th></th></tr>
+                        </thead>
+
+                        <tbody>
                         {% for account in accounts %}
-                            <li class="list-group-item">
-                                {{ account.login }}:{{ account.password }}
-                                <a href="{{ path('accounts.show', {id: account.id}) }}" class="btn-primary btn-sm float-right">show</a>
-                            </li>
+                            <tr>
+                                <td>{{ account.id }}</td>
+                                <td>{{ account.login }}</td>
+                                <td>{{ account.password }}</td>
+
+                                {% for field in category.allFields %}
+                                    <td>{{ account.fieldValue(field.id)|length > 20 and account.fieldValue(field.id)|split(' ')|length < 2 ? account.fieldValue(field.id)|slice(0, 20) ~ '...' : account.fieldValue(field.id) }}</td>
+                                {% endfor %}
+
+                                <td class="text-center">
+                                    <a href="{{ path('accounts.show', {id: account.id}) }}" class="btn-primary btn-sm float-right">show</a>
+                                </td>
+                            </tr>
                         {% endfor %}
-                    </ul>
+                        </tbody>
+                    </table>
                 {% else %}
                     <div class="alert alert-danger" style="margin-top: 15px;">0 accounts created.</div>
                 {% endif %}
@@ -52,6 +67,12 @@
                         </ul>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="alert alert-warning">
+                {{ form(account_form) }}
             </div>
         </div>
     </div>

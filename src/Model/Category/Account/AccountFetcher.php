@@ -2,7 +2,10 @@
 
 namespace App\Model\Category\Account;
 
+use App\Entity\Account\Account;
+use App\Repository\Category\CategoryRepository;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -17,10 +20,13 @@ class AccountFetcher
      */
     private $paginator;
 
-    public function __construct(Connection $connection, PaginatorInterface $paginator)
+    private $repository;
+
+    public function __construct(Connection $connection, PaginatorInterface $paginator, EntityManagerInterface $em)
     {
         $this->connection = $connection;
         $this->paginator = $paginator;
+        $this->repository = $em->getRepository(Account::class);
     }
 
     public function all(int $page, int $size): PaginationInterface

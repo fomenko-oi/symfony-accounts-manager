@@ -16,6 +16,7 @@ use App\Services\Category\Exporter\SimpleExporter;
 use App\UseCase\Category\CategoryService;
 use App\UseCase\Category\ExporterFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -85,7 +86,7 @@ class CategoriesController extends AbstractController
      * @Route("/categories/{id}", name="category.show", requirements={"id": "\d+"})
      * @ParamConverter("id", class="App\Entity\Category\Category", options={"id": "id"})
      */
-    public function show(Category $category, Request $request, AccountFetcher $fetcher)
+    public function show(Category $category, Request $request, AccountFetcher $fetcher, PaginatorInterface $paginator)
     {
         $account = new Account($category);
         $account_form = $this->createForm(AccountType::class, $account);
@@ -130,11 +131,15 @@ class CategoriesController extends AbstractController
             }
         }
 
-        $accounts = $fetcher->forCategory(
+        $page = 1;
+        $size = self::ACCOUNTS_PER_PAGE;
+        $accounts = $paginator->paginate($category->getAccounts(), $page, $size);
+
+        /*$accounts = $fetcher->forCategory(
             $category->getId(),
             (int)$request->get('page', 1),
             self::ACCOUNTS_PER_PAGE
-        );
+        );*/
 
         return $this->render('categories/show.html.twig', [
             'category' => $category,
