@@ -3,6 +3,7 @@
 namespace App\Entity\Category;
 
 use App\Entity\Account\Account;
+use App\Entity\Account\FieldValue;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -92,13 +93,16 @@ class Category
     {
         return new ArrayCollection(array_merge(
             $this->categoryFields->toArray(),
-            $this->getParentFields()
+            $this->getParentFields()->toArray()
         ));
     }
 
+    /**
+     * @return Collection|Field[]
+     */
     public function getParentFields()
     {
-        return $this->parent ? $this->getParent()->getAllFields()->toArray() : [];
+        return $this->parent ? $this->getParent()->getAllFields() : new ArrayCollection();
     }
 
     /**

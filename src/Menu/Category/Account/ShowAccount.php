@@ -39,11 +39,20 @@ class ShowAccount
         $menu->addChild('Categories', ['route' => 'categories'])
             ->setAttribute('class', 'breadcrumb-item');
 
-        $menu->addChild($account->getCategory()->getName(), [
-            'route' => 'category.show',
-            'routeParameters' => ['id' => $account->getCategory()->getId()]
-        ])
-            ->setAttribute('class', 'breadcrumb-item');
+        $parent = $account->getCategory();
+
+        $parents = [$parent];
+        while ($parent = $parent->getParent()) {
+            $parents[] = $parent;
+        }
+
+        array_map(function(Category $parent) use($menu) {
+            $menu->addChild($parent->getName(), [
+                'route' => 'category.show',
+                'routeParameters' => ['id' => $parent->getId()]
+            ])
+                ->setAttribute('class', 'breadcrumb-item');
+        }, array_reverse($parents));
 
         $menu->addChild("Account #{$account->getId()}")
             ->setAttribute('class', 'breadcrumb-item');

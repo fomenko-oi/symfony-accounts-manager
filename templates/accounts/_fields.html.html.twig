@@ -1,0 +1,31 @@
+<tr class="text-center bg-primary" style="color: white; opacity: .7"><td colspan="6">{{ title }}</td></tr>
+
+{% for field in fields %}
+    <tr>
+        <td>{{ field.id }}</td>
+        <td>{{ field.name }}</td>
+        <td>
+            {% if field.select %}
+                <span class="badge badge-primary">Select</span>
+            {% elseif field.textarea %}
+                <span class="badge badge-secondary">Textarea</span>
+            {% elseif field.text %}
+                <span class="badge badge-success">Text</span>
+            {% endif %}
+        </td>
+        <td>{{ field.variables|join("<br>")|raw }}</td>
+        <td class="text-center">
+            {% if field.required %}
+                <span class="badge badge-success">Yes</span>
+            {% else %}
+                <span class="badge badge-secondary">No</span>
+            {% endif %}
+        </td>
+        <td>
+            <span class="btn btn-sm btn-danger delete-entity" data-url="{{ path('category.field.delete', {
+                id: app.request.get('category').id,
+                field_id: field.id
+            }) }}">Delete</span>
+        </td>
+    </tr>
+{% endfor %}
