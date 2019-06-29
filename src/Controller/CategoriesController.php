@@ -131,15 +131,11 @@ class CategoriesController extends AbstractController
             }
         }
 
-        $page = 1;
-        $size = self::ACCOUNTS_PER_PAGE;
-        $accounts = $paginator->paginate($category->getAccounts(), $page, $size);
-
-        /*$accounts = $fetcher->forCategory(
-            $category->getId(),
+        $accounts = $paginator->paginate(
+            $category->getAccounts(),
             (int)$request->get('page', 1),
             self::ACCOUNTS_PER_PAGE
-        );*/
+        );
 
         return $this->render('categories/show.html.twig', [
             'category' => $category,
