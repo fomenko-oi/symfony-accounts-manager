@@ -6,7 +6,7 @@
 {{ knp_menu_render('show_account') }}
 
 <div class="example-wrapper">
-    <h1>Account #{{ account.id }}</h1>
+    <h1>Account #{{ account.id }} <a class="btn btn-success float-right" href="{{ path('accounts.edit', {id: account.id}) }}">Edit</a></h1>
 
     <div class="alert alert-primary">
         Category: <span class="badge badge-secondary">#{{ account.category.id }}: {{ account.category.name }}</span>

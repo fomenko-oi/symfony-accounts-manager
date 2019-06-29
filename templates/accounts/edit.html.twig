@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editing account #{{ account.id }}{% endblock %}
+
+{% block body %}
+{{ knp_menu_render('edit_account') }}
+
+<div class="example-wrapper">
+    <h1>Account #{{ account.id }}</h1>
+
+    <div class="">
+        {{ form(form) }}
+    </div>
+
+    <a class="btn btn-primary" href="{{ path('category.show', {id: account.category.id}) }}">Go to category</a>
+</div>
+{% endblock %}

@@ -6,12 +6,29 @@ use App\Entity\Account\Account;
 use App\Entity\Category\Category;
 use App\Form\AccountType;
 use App\Form\Category\CategoryType;
+use App\UseCase\Account\AccountService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class AccountsController extends AbstractController
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+    /**
+     * @var AccountService
+     */
+    private $accountService;
+
+    public function __construct(EntityManagerInterface $em, AccountService $accountService)
+    {
+        $this->em = $em;
+        $this->accountService = $accountService;
+    }
+
     /**
      * @Route("/accounts", name="accounts.index")
      */
@@ -25,11 +42,40 @@ class AccountsController extends AbstractController
     }
 
     /**
+     * @Route("/accounts/{id}/edit", name="accounts.edit")
+     */
+    public function edit(Account $account, Request $request)
+    {
+        $form = $this->createForm(AccountType::class, $account);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            try {
+                $this->accountService->editAccount($account, $form);
+                $this->em->flush();
+
+                $this->addFlash('success', 'Account success updated.');
+                return $this->redirectToRoute('accounts.show', [
+                    'id' => $account->getId()
+                ]);
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute('accounts.show', [
+                    'id' => $account->getId()
+                ]);
+            }
+        }
+
+        return $this->render('accounts/edit.html.twig', [
+            'account' => $account,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
      * @Route("/accounts/{id}/show", name="accounts.show")
      */
     public function show(Account $account)
     {
-
         return $this->render('accounts/show.html.twig', [
             'account' => $account,
         ]);
@@ -47,15 +93,17 @@ class AccountsController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
-            $account->setCategory($category);
+            try {
+                $this->accountService->create($category, $account);
+                $this->em->flush();
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($category);
-            $em->flush();
+                $this->addFlash('success', 'Account was created.');
 
-            $this->addFlash('success', 'Category was created.');
-
-            return $this->redirectToRoute('accounts.index');
+                return $this->redirectToRoute('accounts.index');
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute('accounts.index');
+            }
         }
 
         return $this->render('accounts/create.html.twig', [

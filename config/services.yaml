@@ -38,3 +38,6 @@ services:
 
     App\Menu\Category\Account\ShowAccount:
         tags: [{ name: knp_menu.menu_builder, method: build, alias: show_account }]
+
+    App\Menu\Category\Account\EditAccount:
+        tags: [{ name: knp_menu.menu_builder, method: build, alias: edit_account }]

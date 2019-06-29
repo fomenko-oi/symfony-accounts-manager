@@ -74,6 +74,14 @@ class CategoriesController extends AbstractController
     }
 
     /**
+     * @Route("/categories/{id}/fields/{field_id}", name="category.field.delete", methods={"DELETE"})
+     */
+    public function deleteField(Category $category, Field $field)
+    {
+        $this->createForm(FieldType::class, $field);
+    }
+
+    /**
      * @Route("/categories/{id}", name="category.show", requirements={"id": "\d+"})
      * @ParamConverter("id", class="App\Entity\Category\Category", options={"id": "id"})
      */

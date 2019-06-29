@@ -34,32 +34,37 @@ class AccountType extends AbstractType
             ->add('password', TextType::class)
         ;
 
-        /** @var Category $category */
-        $category = $builder->getData()->getCategory();
-        $fields = $category->getAllFields();
+        /** @var Account $account */
+        $account = $builder->getData();
+        $fields = $account->getCategory()->getAllFields();
 
         /** @var Field $field */
         foreach ($fields as $field) {
             $key = "field_{$field->getId()}";
+            $value = $account->getFieldValue($field->getId());
 
             if($field->isText()) {
                 $builder->add($key, TextType::class, [
                     'label' => $field->getName(),
                     'mapped' => false,
                     'required' => $field->isRequired(),
+                    'data' => $value
                 ]);
             } elseif($field->isTextarea()) {
                 $builder->add($key, TextareaType::class, [
                     'label' => $field->getName(),
                     'mapped' => false,
                     'required' => $field->isRequired(),
+                    'data' => $value
+
                 ]);
             } elseif ($field->isSelect()) {
                 $builder->add($key, ChoiceType::class, [
                     'label' => $field->getName(),
                     'mapped' => false,
                     'required' => $field->isRequired(),
-                    'choices' => array_flip($field->getVariables()->toArray())
+                    'choices' => array_flip($field->getVariables()->toArray()),
+                    'data' => $value
                 ]);
             }
         }

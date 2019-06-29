@@ -72,6 +72,15 @@ class Account
         return $this;
     }
 
+    public function removeFieldValue(FieldValue $value)
+    {
+        if ($this->fieldValues->contains($value)) {
+            $this->fieldValues->removeElement($value);
+        }
+
+        return $this;
+    }
+
     public function getFieldValue($fieldId)
     {
         /** @var FieldValue $field */
