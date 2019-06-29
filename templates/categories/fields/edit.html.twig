@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editing field {{ field.name }}{% endblock %}
+
+{% block body %}
+{{ knp_menu_render('edit_field') }}
+
+<div class="example-wrapper">
+    <h1>Field {{ field.name }}</h1>
+
+    <div class="">
+        {{ form(form) }}
+    </div>
+
+    <a class="btn btn-primary" href="{{ path('category.show', {id: category.id}) }}">Go to parent category</a>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        var $field_type_input = $('#field_type')
+        var $field_variables = $('#field_variables_raw')
+
+        if($field_type_input.val() !== 'select') {
+            $field_variables.parent('.form-group').hide()
+        }
+
+        $field_type_input.change(function() {
+            if($field_type_input.val() === 'select') {
+                $field_variables.parent('.form-group').show()
+            } else {
+                $field_variables.parent('.form-group').hide()
+            }
+        })
+    </script>
+{% endblock %}

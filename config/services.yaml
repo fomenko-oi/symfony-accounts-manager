@@ -36,6 +36,9 @@ services:
     App\Menu\Category\ShowCategory:
         tags: [{ name: knp_menu.menu_builder, method: build, alias: show_category }]
 
+    App\Menu\Category\Field\EditField:
+        tags: [{ name: knp_menu.menu_builder, method: build, alias: edit_field }]
+
     App\Menu\Category\Account\ShowAccount:
         tags: [{ name: knp_menu.menu_builder, method: build, alias: show_account }]
 
