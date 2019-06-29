@@ -9,7 +9,9 @@ use App\Entity\Account\FieldValue;
 use App\Form\AccountType;
 use App\Form\Category\CategoryType;
 use App\Form\Category\FieldType;
+use App\Model\Category\Account\AccountFetcher;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,6 +21,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CategoriesController extends AbstractController
 {
+    const ACCOUNTS_PER_PAGE = 10;
+
     /**
      * @var EntityManagerInterface
      */
@@ -45,7 +49,7 @@ class CategoriesController extends AbstractController
      * @Route("/categories/{id}", name="category.show", requirements={"id": "\d+"})
      * @ParamConverter("id", class="App\Entity\Category\Category", options={"id": "id"})
      */
-    public function show(Category $category, Request $request)
+    public function show(Category $category, Request $request, AccountFetcher $fetcher)
     {
         $account = new Account($category);
         $account_form = $this->createForm(AccountType::class, $account);
@@ -99,8 +103,15 @@ class CategoriesController extends AbstractController
             return $this->redirectToRoute('category.show', ['id' => $category->getId()]);
         }
 
+        $accounts = $fetcher->forCategory(
+            $category->getId(),
+            (int)$request->get('page', 1),
+            self::ACCOUNTS_PER_PAGE
+        );
+
         return $this->render('categories/show.html.twig', [
             'category' => $category,
+            'accounts' => $accounts,
             'account_form' => $account_form->createView(),
             'fields_form' => $fields_form->createView(),
         ]);

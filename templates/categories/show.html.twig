@@ -23,9 +23,9 @@
 
         <div class="col-md-6">
             <div class="alert alert-primary">
-                {% if category.accounts.count > 0 %}
+                {% if accounts.count > 0 %}
                     <ul style="margin-bottom: 0;" class="list-group">
-                        {% for account in category.accounts %}
+                        {% for account in accounts %}
                             <li class="list-group-item">
                                 {{ account.login }}:{{ account.password }}
                                 <a href="{{ path('accounts.show', {id: account.id}) }}" class="btn-primary btn-sm float-right">show</a>
@@ -35,6 +35,14 @@
                 {% else %}
                     <div class="alert alert-danger" style="margin-top: 15px;">0 accounts created.</div>
                 {% endif %}
+
+                <div class="row text-center" style="margin-top: 20px;">
+                    <div class="col-md-12 text-center">
+                        <ul class="pagination text-center">
+                            {{ knp_pagination_render(accounts) }}
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -64,52 +72,19 @@
                         </thead>
 
                         <tbody>
-                        {% if category.parentFields|length > 0 %}
-                            <tr class="text-center bg-primary" style="color: white; opacity: .7"><td colspan="6">Parent attributes</td></tr>
+                            {% if category.parentFields|length > 0 %}
+                                {% include 'accounts/_fields.html.html.twig' with {
+                                    title: 'Parent attributes',
+                                    fields: category.parentFields
+                                } %}
+                            {% endif %}
 
-                            {% for field in category.parentFields %}
-                                <tr>
-                                    <td>{{ field.id }}</td>
-                                    <td>{{ field.name }}</td>
-                                    <td>{{ field.type }}</td>
-                                    <td>{{ field.variables|join("<br>")|raw }}</td>
-                                    <td class="text-center">
-                                        {% if field.required %}
-                                            <span class="badge badge-success">Yes</span>
-                                        {% else %}
-                                            <span class="badge badge-secondary">No</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <span class="btn btn-success">asd</span>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
-
-
-                        {% if category.ownFields|length > 0 %}
-                            <tr class="text-center bg-primary" style="color: white; opacity: .7"><td colspan="6">Own attributes</td></tr>
-
-                            {% for field in category.ownFields %}
-                                <tr>
-                                    <td>{{ field.id }}</td>
-                                    <td>{{ field.name }}</td>
-                                    <td>{{ field.type }}</td>
-                                    <td>{{ field.variables|join("<br>")|raw }}</td>
-                                    <td class="text-center">
-                                        {% if field.required %}
-                                            <span class="badge badge-success">Yes</span>
-                                        {% else %}
-                                            <span class="badge badge-secondary">No</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <span class="btn btn-success">asd</span>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
+                            {% if category.ownFields|length > 0 %}
+                                {% include 'accounts/_fields.html.html.twig' with {
+                                    title: 'Own attributes',
+                                    fields: category.ownFields
+                                } %}
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
