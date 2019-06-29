@@ -19,6 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,31 +84,20 @@ class CategoriesController extends AbstractController
         $account_form->handleRequest($request);
 
         if($account_form->isSubmitted() && $account_form->isValid()) {
-            /** @var Field $field */
-            foreach ($category->getAllFields() as $field) {
-                $value = $account_form->get("field_{$field->getId()}")->getData();
-                if($field->isSelect()) {
-                    $value = $field->getVariables()[$value] ?? null;
-                }
+            try {
+                $this->categoryService->createAccount($category, $account, $account_form);
+                $this->em->flush();
 
-                $fieldValue = new FieldValue();
-                $fieldValue->setField($field);
-                $fieldValue->setAccount($account);
-                $fieldValue->setValue($value);
-
-                $account->addFieldValue($fieldValue);
-
-                $this->em->persist($fieldValue);
+                $this->addFlash('success', 'Account success created.');
+                return $this->redirectToRoute('category.show', [
+                    'id' => $category->getId()
+                ]);
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute('category.show', [
+                    'id' => $category->getId()
+                ]);
             }
-
-            $category->addAccount($account);
-
-            $this->em->persist($account);
-            $this->em->flush();
-
-            $this->addFlash('success', 'Account success created.');
-
-            return $this->redirectToRoute('category.show', ['id' => $category->getId()]);
         }
 
         $field = new Field();
@@ -115,19 +105,21 @@ class CategoriesController extends AbstractController
         $fields_form->handleRequest($request);
 
         if($fields_form->isSubmitted() && $fields_form->isValid()) {
-            $variables = array_map('trim', explode("\n", $fields_form->get('variables_raw')->getData()));
+            try {
+                $this->categoryService->createField($category, $field, $fields_form);
+                $this->em->flush();
 
-            $field->setVariables($variables);
+                $this->addFlash('success', 'New tag added successful.');
 
-            $this->em->persist($field);
-
-            $category->addCategoryField($field);
-
-            $this->em->flush();
-
-            $this->addFlash('success', 'New tag added successful.');
-
-            return $this->redirectToRoute('category.show', ['id' => $category->getId()]);
+                return $this->redirectToRoute('category.show', [
+                    'id' => $category->getId()
+                ]);
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+                return $this->redirectToRoute('category.show', [
+                    'id' => $category->getId()
+                ]);
+            }
         }
 
         $accounts = $fetcher->forCategory(
