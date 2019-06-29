@@ -6,7 +6,16 @@
 {{ knp_menu_render('show_category') }}
 
 <div class="example-wrapper">
-    <h1>Category #{{ category.id }}</h1>
+    <h1>Category #{{ category.id }}
+        <a target="_blank" class="btn btn-primary float-right" href="{{ path('category.accounts.export', {
+            id: category.id,
+            type: 'simple'
+        }) }}">Simple export</a>
+        <a target="_blank" class="btn btn-success float-right" href="{{ path('category.accounts.export', {
+            id: category.id,
+            type: 'csv'
+        }) }}">Export to CSV</a>
+    </h1>
 
     {% if category.parent %}
         <div class="alert alert-secondary">

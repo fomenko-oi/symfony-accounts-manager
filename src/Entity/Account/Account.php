@@ -76,7 +76,7 @@ class Account
     {
         /** @var FieldValue $field */
         foreach ($this->fieldValues as $field) {
-            if($field->getId() === $fieldId) {
+            if($field->getField()->getId() === $fieldId) {
                 return $field->getValue();
             }
         }

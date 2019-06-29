@@ -11,6 +11,10 @@ use App\Form\Category\CategoryType;
 use App\Form\Category\FieldType;
 use App\Model\Category\Account\AccountFetcher;
 use App\Model\Category\CategoryFetcher;
+use App\Services\Category\Exporter\CSVExporter;
+use App\Services\Category\Exporter\SimpleExporter;
+use App\UseCase\Category\CategoryService;
+use App\UseCase\Category\ExporterFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -29,10 +33,15 @@ class CategoriesController extends AbstractController
      * @var EntityManagerInterface
      */
     private $em;
+    /**
+     * @var CategoryService
+     */
+    private $categoryService;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, CategoryService $categoryService)
     {
         $this->em = $em;
+        $this->categoryService = $categoryService;
     }
 
     /**
@@ -48,6 +57,19 @@ class CategoriesController extends AbstractController
         return $this->render('categories/index.html.twig', [
             'categories' => $categories,
         ]);
+    }
+
+    /**
+     * @Route("/categories/{id}/accounts/export/{type}", name="category.accounts.export")
+     */
+    public function exportAccounts(Category $category, string $type)
+    {
+        try {
+            return $this->categoryService->export($category, $type);
+        } catch (\Exception $e) {
+            $this->addFlash('error', $e->getMessage());
+            return $this->redirectToRoute('category.show', ['id' => $category->getId()]);
+        }
     }
 
     /**
