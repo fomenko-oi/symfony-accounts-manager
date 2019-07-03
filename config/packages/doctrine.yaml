@@ -9,6 +9,10 @@ doctrine:
             collate: utf8_unicode_ci
 
         url: '%env(resolve:DATABASE_URL)%'
+
+        types:
+            user_email: App\Entity\User\EmailType
+            user_role: App\Entity\User\RoleType
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore
@@ -20,3 +24,4 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+

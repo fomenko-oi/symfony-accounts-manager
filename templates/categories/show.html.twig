@@ -24,6 +24,27 @@
 
     <div class="row">
         <div class="col-md-8">
+            <div class="col-md-12" style="margin-bottom: 25px; margin-top: 15px;">
+                <h4>Filters</h4>
+
+                {{ form_start(filter_form) }}
+                <div class="row">
+                    <div class="col-md-2">{{ form_widget(filter_form.account_id) }}</div>
+                    <div class="col-md-2">{{ form_widget(filter_form.login) }}</div>
+                    <div class="col-md-2">{{ form_widget(filter_form.password) }}</div>
+
+                    {% for field in category.allFields %}
+                        <div class="col-md-2">{{ form_widget(filter_form['filter_field_' ~ field.id]) }}</div>
+                    {% endfor %}
+
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="{{ path('category.show', {id: category.id}) }}" class="btn btn-outline-secondary">Reset</a>
+                    </div>
+                </div>
+                {{ form_end(filter_form) }}
+            </div>
+
             <div class="">
                 {% if accounts.count > 0 %}
                     <table class="table table-bordered">
