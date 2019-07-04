@@ -4,9 +4,11 @@ namespace App\Entity\User;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Table(name="users")
  */
 class User implements UserInterface
 {
@@ -53,7 +55,7 @@ class User implements UserInterface
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): ?Email
     {
         return $this->email;
     }
@@ -65,6 +67,11 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getDate(): \DateTimeImmutable
+    {
+        return $this->date;
+    }
+
     /**
      * A visual identifier that represents this user.
      *
@@ -72,7 +79,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string) $this->email->getValue();
     }
 
     /**
@@ -80,7 +87,13 @@ class User implements UserInterface
      */
     public function getRoles(): array
     {
-        return [$this->role->getRole()];
+        $roles = ['ROLE_USER'];
+
+        if($this->role->isAdmin()) {
+            $roles[] = 'ROLE_ADMIN';
+        }
+
+        return $roles;
     }
 
     public function setRole(Role $role): self
