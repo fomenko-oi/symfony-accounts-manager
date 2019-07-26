@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Users list{% endblock %}
+
+{% block body %}
+    <div class="d-flex flex-row mb-3">
+        <a href="{{ path('users.edit', { user: user.id }) }}" class="btn btn-success mr-1">Edit</a>
+
+        <form method="POST" action="" class="mr-1">
+            <button class="btn btn-danger">Delete</button>
+        </form>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            {% if user.role.isUser %}
+                <a href="{{ path('users.change_role', {
+                    user: user.id,
+                    role: 'admin'
+                }) }}" class="btn btn-success">Make admin</a>
+            {% elseif user.role.isAdmin and app.user.id != user.id %}
+                <a href="{{ path('users.change_role', {
+                    'user': user.id,
+                    'role': 'user'
+                }) }}" class="btn btn-secondary">Make simple user</a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <tbody>
+        <tr>
+            <th>ID</th><td>{{ user.id }}</td>
+        </tr>
+        <tr>
+            <th>Email</th><td>{{ user.email.value }}</td>
+        </tr>
+        <tr>
+            <th>Created at</th><td>{{ user.date|date }}</td>
+        </tr>
+        <tr>
+            <th>Role</th>
+            <td>
+                {% if user.role.isAdmin %}
+                    <span class="badge badge-success">Admin</span>
+                {% elseif user.role.isUser %}
+                    <span class="badge badge-primary">User</span>
+                {% endif %}
+            </td>
+        </tr>
+        <tbody>
+        </tbody>
+    </table>
+{% endblock %}

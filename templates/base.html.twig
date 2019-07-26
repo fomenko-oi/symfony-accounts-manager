@@ -9,6 +9,56 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+    <style>
+        .app-header {
+            background: rgba(86,61,124,.8);
+            padding: 10px 15px;
+        }
+        .app-header a.nav-link {
+            color: white;
+        }
+    </style>
+
+        <header class="app-header nav">
+            <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <a class="navbar-brand" style="color: white" href="#">Symfony Project</a>
+
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('categories') }}">Categories</a>
+                </li>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('users.index') }}">Users</a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            {% if app.user %}
+                <ul class="nav navbar-nav ml-auto mr-4">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            {{ app.user.username }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <div class="dropdown-header text-center">
+                                <strong>Account</strong>
+                            </div>
+                            <a class="dropdown-item" href="{{ path('home') }}"><i class="fa fa-user"></i> Profile</a>
+                            <a class="dropdown-item" href="{{ path('logout') }}"><i class="fa fa-lock"></i> Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            {% endif %}
+        </header>
+
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12" style="margin-top: 30px;">

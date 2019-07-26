@@ -60,7 +60,7 @@ class User implements UserInterface
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(Email $email): self
     {
         $this->email = $email;
 
@@ -82,6 +82,11 @@ class User implements UserInterface
         return (string) $this->email->getValue();
     }
 
+    public function getRole(): ?Role
+    {
+        return $this->role;
+    }
+
     /**
      * @see UserInterface
      */
@@ -99,7 +104,7 @@ class User implements UserInterface
     public function setRole(Role $role): self
     {
         if($this->role->isRole($role)) {
-            throw new \InvalidArgumentException("User already has role {$role}.");
+            throw new \InvalidArgumentException("User already has role {$role->getRole()}.");
         }
         $this->role = $role;
 

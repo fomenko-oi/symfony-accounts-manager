@@ -11,19 +11,20 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RegisterType extends AbstractType
+class EditType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('email', EmailType::class)
-            ->add('password', PasswordType::class)
-            ->add('plainPassword', PasswordType::class, [
-                'label' => 'Repeat of your password',
+            ->add('password', PasswordType::class, [
+                'label' => 'Set new password',
+                'required' => false,
+                //'validation_groups' => false,
             ])
             ->add('save', SubmitType::class, [
                 'attr' => ['class' => 'btn btn-success'],
-                'label' => 'Register',
+                'label' => 'Update',
             ])
         ;
     }
@@ -32,6 +33,7 @@ class RegisterType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Form::class,
+            'validation_groups' => 'updating'
         ]);
     }
 }
