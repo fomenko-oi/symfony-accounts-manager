@@ -5,25 +5,21 @@ namespace App\Controller;
 use App\Entity\Account\Account;
 use App\Entity\Category\Category;
 use App\Entity\Category\Field;
-use App\Entity\Account\FieldValue;
 use App\Form\AccountType;
 use App\Form\Category\CategoryType;
 use App\Form\Category\FieldType;
 use App\Model\Category\Account\AccountFetcher;
 use App\Model\Category\CategoryFetcher;
-use App\Services\Category\Exporter\CSVExporter;
-use App\Services\Category\Exporter\SimpleExporter;
+use App\Model\Category\Account\Filter\Filter;
+use App\Model\Category\Account\Filter\Form;
 use App\UseCase\Category\CategoryService;
-use App\UseCase\Category\ExporterFactory;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\PersistentCollection;
 use Knp\Component\Pager\PaginatorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CategoriesController extends AbstractController
@@ -39,11 +35,16 @@ class CategoriesController extends AbstractController
      * @var CategoryService
      */
     private $categoryService;
+    /**
+     * @var AccountFetcher
+     */
+    private $accountFetcher;
 
-    public function __construct(EntityManagerInterface $em, CategoryService $categoryService)
+    public function __construct(EntityManagerInterface $em, CategoryService $categoryService, AccountFetcher $accountFetcher)
     {
         $this->em = $em;
         $this->categoryService = $categoryService;
+        $this->accountFetcher = $accountFetcher;
     }
 
     /**
@@ -131,6 +132,17 @@ class CategoriesController extends AbstractController
             }
         }
 
+        $filter = new Filter();
+        $filter_form = $this->createForm(Form::class, $filter);
+        $filter_form->handleRequest($request);
+
+        $accounts = $this->accountFetcher->forCategory(
+            $filter,
+            $category,
+            (int)$request->get('page', 1),
+            self::ACCOUNTS_PER_PAGE
+        );
+
         $accounts = $paginator->paginate(
             $category->getAccounts(),
             (int)$request->get('page', 1),
@@ -142,6 +154,7 @@ class CategoriesController extends AbstractController
             'accounts' => $accounts,
             'account_form' => $account_form->createView(),
             'fields_form' => $fields_form->createView(),
+            'filter_form' => $filter_form->createView()
         ]);
     }
 
